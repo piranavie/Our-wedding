@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#21080e">
+<title>Prakanth & Piranavie | Wedding Invitation</title>
+<link rel="preload" as="image" href="save_the_date.webp">
+<link rel="preload" as="image" href="invitation.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Shared SVG definitions for the envelope -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="velvet" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9a2133"/><stop offset=".55" stop-color="#7a1426"/><stop offset="1" stop-color="#560b19"/>
+    </linearGradient>
+    <linearGradient id="velvetSide" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6a1020"/><stop offset="1" stop-color="#8d1b2e"/>
+    </linearGradient>
+    <linearGradient id="velvetFlap" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8a1a2c"/><stop offset="1" stop-color="#a42739"/>
+    </linearGradient>
+    <linearGradient id="goldLine" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8e1a6"/><stop offset=".5" stop-color="#c8964a"/><stop offset="1" stop-color="#f1d28e"/>
+    </linearGradient>
+    <pattern id="lining" width="24" height="24" patternUnits="userSpaceOnUse">
+      <rect width="24" height="24" fill="#3a0912"/>
+      <path d="M12 3c3 4 3 6 0 9-3-3-3-5 0-9zM12 21c-3-4-3-6 0-9 3 3 3 5 0 9z" fill="#e4c48a" opacity=".28"/>
+    </pattern>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .22 0" result="a"/>
+      <feComposite in="a" in2="SourceAlpha" operator="in" result="g"/>
+      <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="g"/></feMerge>
+    </filter>
+    <g id="curl" fill="none" stroke="url(#goldLine)" stroke-width="1.6" stroke-linecap="round">
+      <path d="M0 0c18 0 30 8 30 22 0 9-7 14-13 12-6-2-6-10 0-11"/>
+      <path d="M0 0c0 18 8 30 22 30 9 0 14-7 12-13-2-6-10-6-11 0"/>
+      <path d="M8 8c10 2 16 8 18 18" opacity=".7"/>
+      <circle cx="40" cy="6" r="2" fill="#e9c47c" stroke="none"/>
+      <circle cx="6" cy="40" r="2" fill="#e9c47c" stroke="none"/>
+      <path d="M46 2c6 0 10 2 14 0M2 46c0 6 2 10 0 14" opacity=".8"/>
+    </g>
+  </defs>
+</svg>
+
+<div class="backdrop"></div>
+<div class="petals" id="petals"></div>
+<div class="vignette"></div>
+
+<main class="stage" id="stage">
+  <div class="topline">Together with our families<span>Prakanth &amp; Piranavie</span></div>
+
+  <div class="area">
+    <div class="env-wrap">
+      <button class="envelope" id="envelope" type="button" aria-label="Open the wedding invitation envelope">
+        <span class="env-shadow"></span>
+        <span class="env-back"></span>
+        <span class="env-card" id="envCard"></span>
+
+        <!-- Front pocket: side flaps + bottom flap -->
+        <svg class="pocket" viewBox="0 0 600 400" aria-hidden="true">
+          <g filter="url(#grain)">
+            <path d="M0 6Q0 0 6 0L284 214Q300 226 284 238L6 400Q0 400 0 394Z" fill="url(#velvetSide)"/>
+            <path d="M600 6Q600 0 594 0L316 214Q300 226 316 238L594 400Q600 400 600 394Z" fill="url(#velvetSide)"/>
+            <path d="M0 394L282 176Q300 162 318 176L600 394Q600 400 594 400H6Q0 400 0 394Z" fill="url(#velvet)"/>
+          </g>
+          <g fill="none" stroke="url(#goldLine)" stroke-width="1.4" opacity=".9">
+            <path d="M0 394L282 176Q300 162 318 176L600 394"/>
+            <path d="M28 384L286 186Q300 176 314 186L572 384" stroke-dasharray="1 5" stroke-linecap="round" stroke-width="2"/>
+            <rect x="12" y="12" width="576" height="376" rx="3" opacity=".55"/>
+          </g>
+          <use href="#curl" transform="translate(22 378) scale(1 -1)"/>
+          <use href="#curl" transform="translate(578 378) scale(-1 -1)"/>
+          <g fill="#e9c47c" opacity=".85">
+            <path d="M300 350l6 10-6 10-6-10z"/><circle cx="276" cy="360" r="2"/><circle cx="324" cy="360" r="2"/>
+          </g>
+          <path d="M210 360h56M334 360h56" stroke="url(#goldLine)" stroke-width="1.2"/>
+        </svg>
+
+        <!-- Top flap (3D) -->
+        <span class="flap" aria-hidden="true">
+          <svg class="outside" viewBox="0 0 600 250" preserveAspectRatio="none">
+            <path d="M6 0H594Q600 0 596 4L318 236Q300 250 282 236L4 4Q0 0 6 0Z" fill="url(#velvetFlap)" filter="url(#grain)"/>
+            <path d="M26 10L290 226Q300 234 310 226L574 10" fill="none" stroke="url(#goldLine)" stroke-width="1.5"/>
+            <path d="M52 12L292 210Q300 216 308 210L548 12" fill="none" stroke="url(#goldLine)" stroke-width="2" stroke-dasharray="1 6" stroke-linecap="round" opacity=".85"/>
+            <use href="#curl" transform="translate(22 8) scale(.8)"/>
+            <use href="#curl" transform="translate(578 8) scale(-.8 .8)"/>
+          </svg>
+          <svg class="inside" viewBox="0 0 600 250" preserveAspectRatio="none">
+            <path d="M6 0H594Q600 0 596 4L318 236Q300 250 282 236L4 4Q0 0 6 0Z" fill="url(#lining)"/>
+            <path d="M26 10L290 226Q300 234 310 226L574 10" fill="none" stroke="#e4c48a" stroke-opacity=".5" stroke-width="1.5"/>
+          </svg>
+        </span>
+
+        <!-- Seal + tassel -->
+        <span class="seal" aria-hidden="true">
+          <span class="tassel"><i class="cord"></i><i class="knot"></i><i class="cap"></i><i class="fringe"></i></span>
+          <span class="medal"><b>ॐ</b></span>
+          <span class="tap-ring"></span>
+        </span>
+      </button>
+
+      <div class="env-hint">
+        <h1>You're Invited</h1>
+        <p>Tap the envelope to open</p>
+      </div>
+    </div>
+
+    <div class="deck" id="deck" aria-live="polite">
+      <figure class="card current" data-label="Save the Date">
+        <img src="save_the_date.webp" alt="Save the date for Prakanth and Piranavie, Saturday 28 August 2027, 10:00 am to 6:00 pm" draggable="false">
+      </figure>
+      <figure class="card behind" data-label="Invitation">
+        <img src="invitation.webp" alt="Wedding of Prakanth and Piranavie at The Crystal Suite, The Greyhound Hotel, 3 London Road, Slough, Berkshire SL3 7HR on Saturday 28 August 2027. Kindly RSVP by 8 August 2027" draggable="false">
+      </figure>
+    </div>
+  </div>
+
+  <nav class="nav" aria-label="Invitation cards">
+    <button class="btn ghost" id="prevBtn" type="button" disabled>‹ Back</button>
+    <div class="dots"><span id="label">Save the Date</span><div id="dots"></div></div>
+    <button class="btn" id="nextBtn" type="button">Next ›</button>
+  </nav>
+</main>
+<section class="rsvp-screen" id="rsvpScreen" aria-label="Wedding RSVP" aria-hidden="true">
+  <div class="rsvp-panel">
+    <div class="rsvp-ornament" aria-hidden="true">✦ ❀ ✦</div>
+    <h2 id="rsvpTitle">Will you join us?</h2>
+    <p id="rsvpIntro">Your presence would make our special day even more memorable. Kindly reply by 8 August 2027.</p>
+    <form id="rsvpForm">
+      <div class="rsvp-choice" role="group" aria-label="Will you attend?">
+        <button type="button" id="attendYes" aria-pressed="false">♡ Yes, we'll be there!</button>
+        <button type="button" id="attendNo" aria-pressed="false">Sorry, we can't attend</button>
+      </div>
+      <div class="rsvp-fields" id="rsvpFields" hidden>
+        <label for="guestName">Your name / family name</label>
+        <input id="guestName" name="name" maxlength="120" autocomplete="name" placeholder="Enter your name" required disabled>
+        <div id="guestCountGroup" hidden>
+          <label for="guestCount">Number of family members attending</label>
+          <input id="guestCount" name="guests" type="number" min="1" max="30" step="1" value="1" required disabled>
+          <small>Include yourself in the total number of guests.</small>
+        </div>
+        <button class="btn rsvp-submit" id="submitRsvp" type="submit">Send my RSVP →</button>
+      </div>
+      <p class="rsvp-error" id="rsvpError" role="alert" hidden></p>
+    </form>
+    <div id="rsvpThanks" hidden role="status">
+      <p id="rsvpThanksText"></p>
+      <p class="rsvp-footer">We look forward to celebrating with you. See you soon!</p>
+    </div>
+    <button type="button" class="rsvp-close" id="rsvpBack">← View invitation again</button>
+  </div>
+</section>
+
+<script src="script.js" defer></script>
+</body>
+</html>
