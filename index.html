@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=20">
 </head>
 <body>
 <!-- Shared SVG definitions for the envelope -->
@@ -114,10 +114,15 @@
 
     <div class="deck" id="deck" aria-live="polite">
       <figure class="card current" data-label="Save the Date">
-        <img src="save_the_date.webp" alt="Save the date for Prakanth and Piranavie, Saturday 28 August 2027, 10:00 am to 6:00 pm" draggable="false">
+        <img id="saveTheDateImage" src="save_the_date.webp" alt="Save the date for Prakanth and Piranavie" draggable="false">
+        <div class="scratch" id="scratch" role="button" tabindex="0" aria-label="Scratch to reveal the wedding date">
+          <canvas class="scratch-foil" id="scratchFoil" aria-hidden="true"></canvas>
+          <span class="scratch-hint" aria-hidden="true"><i class="scratch-finger"></i>Scratch to reveal the date</span>
+        </div>
       </figure>
       <figure class="card behind" data-label="Invitation">
         <img src="invitation.webp" alt="Wedding of Prakanth and Piranavie at The Crystal Suite, The Greyhound Hotel, 3 London Road, Slough, Berkshire SL3 7HR on Saturday 28 August 2027. Kindly RSVP by 8 August 2027" draggable="false">
+        <button class="zoom-hint" id="zoomInvitation" type="button" aria-label="Enlarge the invitation to read it">⤢ Tap to enlarge</button>
       </figure>
     </div>
   </div>
@@ -132,7 +137,17 @@
   <div class="rsvp-panel">
     <div class="rsvp-ornament" aria-hidden="true">✦ ❀ ✦</div>
     <h2 id="rsvpTitle">Will you join us?</h2>
-    <p id="rsvpIntro">Your presence would make our special day even more memorable. Kindly reply by 8 August 2027.</p>
+    <p id="rsvpIntro">Your presence would make our special day even more memorable. Kindly reply by <b id="rsvpDeadline">8 August 2027</b>.</p>
+    <div class="countdown countdown-compact" id="rsvpCountdown" aria-label="Time left to RSVP">
+      <p class="countdown-label">Time left to reply</p>
+      <div class="countdown-tiles">
+        <div class="countdown-unit"><b data-unit="days">0</b><span>Days</span></div>
+        <div class="countdown-unit"><b data-unit="hours">00</b><span>Hours</span></div>
+        <div class="countdown-unit"><b data-unit="minutes">00</b><span>Minutes</span></div>
+        <div class="countdown-unit"><b data-unit="seconds">00</b><span>Seconds</span></div>
+      </div>
+      <p class="countdown-closed">The RSVP deadline has passed — please contact the couple directly.</p>
+    </div>
     <form id="rsvpForm">
       <div class="rsvp-choice" role="group" aria-label="Will you attend?">
         <button type="button" id="attendYes" aria-pressed="false">♡ Yes, we'll be there!</button>
@@ -154,10 +169,56 @@
       <p id="rsvpThanksText"></p>
       <p class="rsvp-footer">We look forward to celebrating with you. See you soon!</p>
     </div>
-    <button type="button" class="rsvp-close" id="rsvpBack">← View invitation again</button>
+    <button type="button" class="rsvp-close" id="rsvpBack">← Back to the programme</button>
   </div>
 </section>
 
-<script src="script.js" defer></script>
+<section class="programme-screen" id="programmeScreen" aria-label="Wedding programme" aria-hidden="true">
+  <div class="programme-scroll">
+    <header class="programme-hero">
+      <div class="programme-ornament" aria-hidden="true">✦ ❀ ✦</div>
+      <p class="programme-kicker">தாலி கட்டு · Thaali ceremony</p>
+      <h2>Order of the day</h2>
+      <p class="programme-note" id="programmeNote">Saturday 28 August 2027</p>
+    </header>
+    <ol class="events" id="timeline" aria-busy="true"></ol>
+    <p class="programme-foot" id="programmeUpdated"></p>
+  </div>
+  <nav class="programme-bar" aria-label="Programme navigation">
+    <button class="btn ghost" id="programmeBack" type="button">‹ Invitation</button>
+    <span class="programme-bar-label">Programme</span>
+    <button class="btn" id="programmeRsvp" type="button">RSVP →</button>
+  </nav>
+</section>
+
+<dialog class="date-pop" id="datePop" aria-labelledby="datePopTitle">
+  <div class="date-pop-panel">
+    <div class="date-pop-ornament" aria-hidden="true">✦ ❀ ✦</div>
+    <p class="date-pop-kicker">Save the date</p>
+    <h2 id="datePopTitle"><span class="date-pop-day" id="datePopDay">Saturday</span><span class="date-pop-num" id="datePopNum">28</span><span class="date-pop-month" id="datePopMonth">August 2027</span></h2>
+    <p class="date-pop-time" id="datePopTime">10:00 am – 6:00 pm</p>
+    <div class="countdown" id="countdown" aria-label="Countdown to the wedding">
+      <div class="countdown-unit"><b data-unit="days">0</b><span>Days</span></div>
+      <div class="countdown-unit"><b data-unit="hours">00</b><span>Hours</span></div>
+      <div class="countdown-unit"><b data-unit="minutes">00</b><span>Minutes</span></div>
+      <div class="countdown-unit"><b data-unit="seconds">00</b><span>Seconds</span></div>
+    </div>
+    <div class="date-pop-actions">
+      <button class="btn ghost" id="addToCalendar" type="button">Add to calendar</button>
+      <button class="btn" id="datePopNext" type="button" autofocus>See the invitation ›</button>
+    </div>
+    <button type="button" class="date-pop-close" id="datePopClose" aria-label="Close">×</button>
+  </div>
+</dialog>
+
+<dialog class="viewer" id="viewer" aria-label="Invitation, enlarged">
+  <div class="viewer-scroll" id="viewerScroll">
+    <img class="viewer-img" id="viewerImg" src="invitation.webp" alt="Wedding invitation, enlarged" draggable="false">
+  </div>
+  <p class="viewer-hint">Pinch or scroll to zoom · drag to pan</p>
+  <button type="button" class="date-pop-close viewer-close" id="viewerClose" aria-label="Close">×</button>
+</dialog>
+
+<script src="script.js?v=20" defer></script>
 </body>
 </html>

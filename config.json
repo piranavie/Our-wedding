@@ -1,0 +1,39 @@
+{
+  "rsvpEndpoint": "",
+
+  "saveTheDate": {
+    "driveFileId": "1teqbaa0HbVDr3qx8h63YTRe5iYliBw8b",
+    "fallbackImage": "save_the_date.webp"
+  },
+
+  "wedding": {
+    "title": "Prakanth & Piranavie — Wedding",
+    "location": "The Crystal Suite, The Greyhound Hotel, 3 London Road, Slough, Berkshire SL3 7HR",
+    "timeZone": "Europe/London",
+    "start": "2027-08-28T10:00",
+    "end": "2027-08-28T18:00"
+  },
+
+  "rsvp": {
+    "deadline": "2027-08-08T23:59"
+  },
+
+  "scratchThreshold": 0.35,
+
+  "programme": {
+    "sheetCsvUrl": "",
+    "refreshSeconds": 120,
+    "fallback": [
+      { "time": "10:00 am", "title": "Welcome & Nadaswaram", "description": "Guests are welcomed with traditional music as the families gather.", "image": "", "glyph": "🎺" },
+      { "time": "10:15 am", "title": "Ganapathi Pooja", "description": "Prayers to Lord Ganesha for an auspicious beginning.", "image": "", "glyph": "🪧" },
+      { "time": "10:45 am", "title": "Kasi Yatra", "description": "The groom sets off on his symbolic pilgrimage before the bride’s father persuades him to return.", "image": "", "glyph": "☂️" },
+      { "time": "11:30 am", "title": "Maalai Maatral", "description": "Exchange of garlands as the couple formally accept each other.", "image": "", "glyph": "💐" },
+      { "time": "11:20 am", "title": "Oonjal", "description": "The couple are seated on the swing and blessed with songs and coloured rice.", "image": "", "glyph": "🌼" },
+      { "time": "11:45 am", "title": "Kanyadaanam", "description": "The bride’s parents give her hand in marriage.", "image": "", "glyph": "🤲" },
+      { "time": "12:05 pm", "title": "Thaali Kattu · Muhurtham", "description": "The groom ties the thaali as the drums rise — the sacred moment of marriage.", "image": "", "glyph": "💍" },
+      { "time": "12:30 pm", "title": "Saptapadi & Ammi Midithal", "description": "Seven steps around the fire and the stepping on the grinding stone.", "image": "", "glyph": "🔥" },
+      { "time": "1:00 pm", "title": "Aseervatham & Lunch", "description": "Blessings from elders followed by a traditional vegetarian feast.", "image": "", "glyph": "🍽️" },
+      { "time": "3:30 pm", "title": "Photographs & Celebrations", "description": "Join the couple for photos, music and dancing until 6:00 pm.", "image": "", "glyph": "📸" }
+    ]
+  }
+}
