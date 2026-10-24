@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>Prepare a family invitation</title>
+  <link rel="stylesheet" href="share.css?v=1">
+  <script src="shared.js?v=1" defer></script>
+  <script src="share.js?v=3" defer></script>
+</head>
+<body>
+  <main>
+    <p class="kicker" id="shareCoupleNames">Wedding invitation</p>
+    <h1>Invite a family</h1>
+    <p>Create a personal invitation link, then review the message in WhatsApp before sending.</p>
+    <form id="shareForm">
+      <label for="invitationUrl">Published invitation URL</label>
+      <input id="invitationUrl" type="url" placeholder="https://your-site.example/index.html" required>
+      <label for="familyName">Family or guest name</label>
+      <input id="familyName" type="text" maxlength="120" placeholder="Thangasuthan Family" required>
+      <button type="submit" disabled>Loading invitation settings…</button>
+    </form>
+    <p id="shareError" role="alert" hidden></p>
+    <section id="shareResult" aria-label="Personalized invitation" hidden>
+      <p role="status">Your invitation link is ready.</p>
+      <label for="personalLink">Personalized link</label>
+      <input id="personalLink" type="url" readonly>
+      <button id="copyLink" type="button">Copy link</button>
+      <label for="messagePreview">WhatsApp message preview</label>
+      <textarea id="messagePreview" rows="7" readonly></textarea>
+      <a id="whatsappLink" class="button" target="_blank" rel="noopener noreferrer">Review in WhatsApp</a>
+    </section>
+    <p class="note">Names are included in the link and are not private or verified. Do not include phone numbers or other sensitive information. This page does not send messages or store family names.</p>
+  </main>
+</body>
+</html>

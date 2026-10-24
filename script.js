@@ -1,6 +1,8 @@
 (() => {
   'use strict';
 
+  const shared = window.InvitationShared;
+
   /* ---------- Helpers ---------- */
 
   const $ = id => document.getElementById(id);
@@ -31,6 +33,24 @@
   const withRefresh = url => url + (url.includes('?') ? '&' : '?') + 'refresh=' + Date.now();
 
   const isObject = v => v && typeof v === 'object' && !Array.isArray(v);
+  const INVITE_ID_PATTERN = /^[A-Za-z0-9_-]{8,80}$/;
+  const PHONE_PATTERN = /^\+?\d{7,20}$/;
+
+  function normalizeInviteId(value) {
+    const text = String(value || '').trim();
+    return INVITE_ID_PATTERN.test(text) ? text : '';
+  }
+
+  function normalizePhone(value) {
+    const text = String(value || '').replace(/[^+\d]/g, '');
+    return PHONE_PATTERN.test(text) ? text : '';
+  }
+
+  function createRequestId() {
+    const bytes = crypto.getRandomValues(new Uint8Array(16));
+    return Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+  }
+
   function deepMerge(base, extra) {
     const out = { ...base };
     for (const k of Object.keys(extra || {})) {
@@ -62,21 +82,25 @@
 
   /* ---------- Configuration (see config.json) ---------- */
 
-  const CONFIG_URL = 'config.json';
   const DEFAULTS = {
+    coupleNames: 'The happy couple',
     rsvpEndpoint: '',
-    saveTheDate: { driveFileId: '', fallbackImage: 'save_the_date.webp' },
     wedding: { title: 'Wedding', location: '', timeZone: 'Europe/London', start: '2027-08-28T10:00', end: '2027-08-28T18:00' },
-    rsvp: { deadline: '2027-08-08T23:59' },
+    rsvp: {
+      deadline: '2027-08-08T23:59',
+      messages: {
+        accepted: 'Thank you for your RSVP. We look forward to celebrating with you — see you soon.',
+        declined: 'Thank you for your RSVP. We understand and hope to see you at a future function.',
+        deadlinePassed: 'The RSVP deadline has passed. You can skip RSVP here and contact the couple directly if needed.'
+      }
+    },
     scratchThreshold: 0.35,
     programme: { sheetCsvUrl: '', refreshSeconds: 120, fallback: [] }
   };
 
   async function loadConfig() {
     try {
-      const response = await fetch(withRefresh(CONFIG_URL), { cache: 'no-store' });
-      if (!response.ok) throw new Error(response.statusText);
-      return deepMerge(DEFAULTS, await response.json());
+      return deepMerge(DEFAULTS, await shared.loadConfig());
     } catch (err) {
       console.warn('config.json could not be loaded; using defaults.', err);
       return DEFAULTS;
@@ -84,41 +108,44 @@
   }
 
   function init(config) {
+    const COUPLE_NAMES = shared.getCoupleNames(config) || DEFAULTS.coupleNames;
     const RSVP_ENDPOINT = config.rsvpEndpoint;
-    const SAVE_THE_DATE_FILE_ID = config.saveTheDate.driveFileId;
-    const SAVE_THE_DATE_FALLBACK = config.saveTheDate.fallbackImage;
     const TIME_ZONE = config.wedding.timeZone || DEFAULTS.wedding.timeZone;
     const WEDDING = {
-      title: config.wedding.title,
+      title: `${COUPLE_NAMES} — ${config.wedding.title}`,
       location: config.wedding.location,
       start: zonedDate(config.wedding.start, TIME_ZONE),
       end: zonedDate(config.wedding.end, TIME_ZONE)
     };
     const RSVP_DEADLINE = zonedDate(config.rsvp.deadline, TIME_ZONE);
+    const RSVP_MESSAGES = {
+      accepted: String(config.rsvp?.messages?.accepted || DEFAULTS.rsvp.messages.accepted),
+      declined: String(config.rsvp?.messages?.declined || DEFAULTS.rsvp.messages.declined),
+      deadlinePassed: String(config.rsvp?.messages?.deadlinePassed || DEFAULTS.rsvp.messages.deadlinePassed)
+    };
     const SCRATCH_THRESHOLD = Number(config.scratchThreshold) || DEFAULTS.scratchThreshold;
     const PROGRAMME_SHEET_CSV_URL = config.programme.sheetCsvUrl;
     const PROGRAMME_REFRESH_MS = Math.max(30, Number(config.programme.refreshSeconds) || DEFAULTS.programme.refreshSeconds) * 1000;
     const PROGRAMME_FALLBACK = Array.isArray(config.programme.fallback) ? config.programme.fallback : [];
 
-    /* ---------- Save the Date artwork ---------- */
+    /* ---------- Couple and family personalization ---------- */
 
-    function loadSaveTheDate() {
-      const cardImage = $('saveTheDateImage');
-      const envelopePreview = $('envCard');
-      const apply = url => {
-        cardImage.src = url;
-        envelopePreview.style.backgroundImage = `url("${url}")`;
-      };
-      if (!SAVE_THE_DATE_FILE_ID) { apply(SAVE_THE_DATE_FALLBACK); return; }
+    document.title = `${COUPLE_NAMES} | Wedding Invitation`;
+    $('coupleNames').textContent = COUPLE_NAMES;
+    document.querySelectorAll('[data-couple-alt]').forEach(image => {
+      image.alt = shared.formatTemplate(image.dataset.coupleAlt, { couple: COUPLE_NAMES });
+    });
 
-      const imageUrl = withRefresh(`https://drive.google.com/thumbnail?id=${encodeURIComponent(SAVE_THE_DATE_FILE_ID)}&sz=w1600`);
-      let settled = false;
-      const settle = url => { if (!settled) { settled = true; clearTimeout(timeout); apply(url); } };
-      const timeout = setTimeout(() => settle(SAVE_THE_DATE_FALLBACK), 8000);
-      const probe = new Image();
-      probe.onload = () => settle(imageUrl);
-      probe.onerror = () => settle(SAVE_THE_DATE_FALLBACK);
-      probe.src = imageUrl;
+    const query = new URLSearchParams(location.search);
+    const familyName = shared.normalizeGuestName(query.get('family'));
+    const inviteId = normalizeInviteId(query.get('invite'));
+    const invitedPhone = normalizePhone(query.get('phone'));
+    if (familyName) {
+      for (const id of ['familyGreeting', 'rsvpFamilyGreeting']) {
+        const greeting = $(id);
+        greeting.textContent = `Dear ${familyName}, you are warmly invited.`;
+        greeting.hidden = false;
+      }
     }
 
     /* ---------- Envelope & card deck ---------- */
@@ -130,18 +157,22 @@
     const cards = [...deck.querySelectorAll('.card')];
     const prevBtn = $('prevBtn');
     const nextBtn = $('nextBtn');
+    const navigation = nextBtn.closest('nav');
     const label = $('label');
     const dots = cards.map(() => $('dots').appendChild(el('i')));
 
     let index = 0;
     let opened = false;
+    let scratchComplete = false;
 
     function render() {
+      navigation.hidden = !scratchComplete;
       cards.forEach((c, i) => {
         c.classList.toggle('current', i === index);
         c.classList.toggle('gone', i < index);
         c.classList.toggle('behind', i > index);
         c.setAttribute('aria-hidden', String(i !== index));
+        c.inert = i !== index;
       });
       dots.forEach((d, i) => d.classList.toggle('on', i === index));
       label.textContent = cards[index].dataset.label;
@@ -150,12 +181,13 @@
     }
 
     function go(n) {
-      if (n < 0 || n >= cards.length || n === index) return;
+      if (!scratchComplete || n < 0 || n >= cards.length || n === index) return;
       index = n;
       render();
       const card = cards[index];
       restartAnimation(card, 'shine');
       if (card.dataset.label === 'Invitation') sparkle(card);
+      deck.scrollIntoView({ block: 'start', behavior: reduced ? 'auto' : 'smooth' });
     }
 
     const advance = () => index === cards.length - 1 ? showProgramme() : go(index + 1);
@@ -185,6 +217,7 @@
       if (opened) return;
       opened = true;
       stage.classList.add('is-open');
+      celebrate();
       await wait(2700);
       // Make the foil part of the card before it rises, so the lift's clip-path
       // uncovers it at the same moment the date area of the artwork appears.
@@ -194,7 +227,27 @@
       await wait(1300);
       cards[0].classList.add('shine');
       scratch.paint();
-      nextBtn.focus({ preventScroll: true });
+      envelope.closest('.env-wrap').hidden = true;
+      if (!scratchComplete) $('scratch').focus({ preventScroll: true });
+    }
+
+    // A celebratory burst of gold confetti and petals when the envelope opens.
+    function celebrate() {
+      if (reduced) return;
+      const layer = $('confetti');
+      const colors = ['#f8e1a6', '#e4c48a', '#c8964a', '#fff6d8', '#b5283c', '#e9a3b0'];
+      for (let i = 0; i < 70; i++) {
+        const c = el('i', i % 4 === 0 ? 'confetti-bit petal-bit' : 'confetti-bit');
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 120 + Math.random() * Math.min(innerWidth, innerHeight) * .5;
+        c.style.setProperty('--x', (Math.cos(angle) * dist).toFixed(0) + 'px');
+        c.style.setProperty('--y', (Math.sin(angle) * dist - 120).toFixed(0) + 'px');
+        c.style.setProperty('--r', (Math.random() * 720 - 360).toFixed(0) + 'deg');
+        c.style.background = colors[i % colors.length];
+        c.style.animationDelay = (0.4 + Math.random() * .5).toFixed(2) + 's';
+        c.addEventListener('animationend', () => c.remove());
+        layer.appendChild(c);
+      }
     }
 
     envelope.addEventListener('click', open);
@@ -204,7 +257,7 @@
     // Tap a card to advance; swipe left/right to move between cards.
     let startX = null, dragX = 0, moved = false;
     deck.addEventListener('pointerdown', e => {
-      if (e.target.closest('.scratch, .zoom-hint')) return;
+      if (!scratchComplete || e.target.closest('.scratch, .zoom-hint')) return;
       startX = e.clientX; dragX = 0; moved = false;
       deck.setPointerCapture(e.pointerId);
     });
@@ -227,7 +280,12 @@
       startX = null;
     };
     deck.addEventListener('pointerup', endDrag);
-    deck.addEventListener('pointercancel', endDrag);
+    // A vertical page scroll cancels the gesture; it must not advance or open the viewer.
+    deck.addEventListener('pointercancel', () => {
+      deck.classList.remove('dragging');
+      cards[index].style.transform = '';
+      startX = null;
+    });
 
     document.addEventListener('keydown', e => {
       if (!stage.classList.contains('is-out') || datePop.open || viewer.open || programmeScreen.classList.contains('visible')) return;
@@ -412,6 +470,8 @@
       function reveal() {
         if (revealed) return;
         revealed = true;
+        scratchComplete = true;
+        render();
         stop();
         panel.classList.add('revealed');
         panel.setAttribute('aria-hidden', 'true');
@@ -739,7 +799,11 @@
     const hideProgramme = () => setScreen(programmeScreen, false);
 
     $('programmeBack').addEventListener('click', () => { hideProgramme(); nextBtn.focus(); });
-    $('programmeRsvp').addEventListener('click', () => { hideProgramme(); showRsvp(); });
+    $('programmeRsvp').addEventListener('click', () => {
+      if (!shouldOpenRsvpForm()) return;
+      hideProgramme();
+      showRsvp();
+    });
 
     /* ---------- RSVP ---------- */
 
@@ -747,23 +811,71 @@
     const rsvpForm = $('rsvpForm');
     const rsvpFields = $('rsvpFields');
     const guestName = $('guestName');
+    guestName.value = familyName;
     const guestCount = $('guestCount');
     const countGroup = $('guestCountGroup');
     const rsvpError = $('rsvpError');
     const attendYes = $('attendYes');
     const attendNo = $('attendNo');
+    const submitRsvp = $('submitRsvp');
     let attending = null;
+    let pendingSubmission = null;
+    let submitting = false;
     const rsvpCountdown = createCountdown($('rsvpCountdown'), RSVP_DEADLINE, () => rsvpScreen.classList.contains('visible'));
+    const rsvpStateKey = `rsvp:last:${inviteId || invitedPhone || familyName || 'guest'}`;
+
+    function loadSavedRsvp() {
+      try {
+        const raw = localStorage.getItem(rsvpStateKey);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object') return null;
+        return parsed;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function saveRsvp(submission) {
+      try {
+        localStorage.setItem(rsvpStateKey, JSON.stringify({
+          attending: !!submission.attending,
+          guests: Number(submission.guests) || 0,
+          name: submission.name,
+          updatedAt: new Date().toISOString()
+        }));
+      } catch (_) {
+        // Best effort only.
+      }
+    }
+
+    function shouldOpenRsvpForm() {
+      if (!loadSavedRsvp()) return true;
+      return confirm('You already sent an RSVP. Do you want to change your response?');
+    }
+
+    function isRsvpClosed() {
+      return !isNaN(RSVP_DEADLINE) && Date.now() > RSVP_DEADLINE.getTime();
+    }
 
     function showRsvp() {
       setScreen(rsvpScreen, true);
       rsvpCountdown.update();
+      if (isRsvpClosed()) {
+        rsvpError.textContent = RSVP_MESSAGES.deadlinePassed;
+        rsvpError.hidden = false;
+      }
       attendYes.focus();
     }
 
     const hideRsvp = () => setScreen(rsvpScreen, false);
 
     function choose(value) {
+      if (isRsvpClosed()) {
+        rsvpError.textContent = RSVP_MESSAGES.deadlinePassed;
+        rsvpError.hidden = false;
+        return;
+      }
       attending = value;
       attendYes.setAttribute('aria-pressed', String(value));
       attendNo.setAttribute('aria-pressed', String(!value));
@@ -772,46 +884,85 @@
       countGroup.hidden = !value;
       guestCount.disabled = !value;
       rsvpError.hidden = true;
+      $('rsvpThanks').hidden = true;
       guestName.focus();
     }
 
     attendYes.addEventListener('click', () => choose(true));
     attendNo.addEventListener('click', () => choose(false));
 
-    function showThanks() {
-      const n = Number(guestCount.value);
-      rsvpForm.hidden = true;
-      $('rsvpIntro').hidden = true;
-      $('rsvpTitle').textContent = 'Thank you!';
+    function showThanks(submission) {
+      $('rsvpTitle').textContent = 'RSVP updated';
       $('rsvpThanks').hidden = false;
-      $('rsvpThanksText').textContent = attending
-        ? `We are delighted you can join us! Your RSVP for ${n} ${n === 1 ? 'guest' : 'guests'} has been received.`
-        : 'Thank you for letting us know. You will be missed, and we appreciate your warm wishes.';
+      $('rsvpThanksText').textContent = submission.attending
+        ? RSVP_MESSAGES.accepted
+        : RSVP_MESSAGES.declined;
     }
     $('rsvpBack').addEventListener('click', () => { hideRsvp(); showProgramme(); });
 
+    function buildRsvpSubmission() {
+      const name = guestName.value.trim();
+      const guests = attending ? Number(guestCount.value) : 0;
+      if (!name || name.length > 120) throw new Error('Please enter a name or family name of up to 120 characters.');
+      if (attending && (!Number.isInteger(guests) || guests < 1 || guests > 30)) {
+        throw new Error('Please enter a guest count between 1 and 30.');
+      }
+      const payload = { name, attending, guests };
+      if (inviteId) payload.inviteId = inviteId;
+      if (invitedPhone) payload.invitedPhone = invitedPhone;
+      const signature = JSON.stringify(payload);
+      // Keep the same request ID when retrying an unchanged response.
+      if (!pendingSubmission || pendingSubmission.signature !== signature) {
+        pendingSubmission = { signature, payload: { ...payload, requestId: createRequestId() } };
+      }
+      return pendingSubmission.payload;
+    }
+
+    async function postRsvp(submission) {
+      if (isRsvpClosed()) {
+        throw new Error(RSVP_MESSAGES.deadlinePassed);
+      }
+      if (!RSVP_ENDPOINT) throw new Error('RSVP submissions are not configured yet. Please contact the couple.');
+      const response = await fetch(RSVP_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(submission)
+      });
+      const result = await response.json();
+      if (!response.ok || result?.ok !== true) {
+        throw new Error(typeof result?.error === 'string' ? result.error : 'Unable to save your RSVP. Please try again.');
+      }
+    }
+
+    function setRsvpBusy(busy) {
+      submitting = busy;
+      submitRsvp.disabled = busy;
+      submitRsvp.textContent = busy ? 'Sending…' : 'Send my RSVP →';
+      attendYes.disabled = attendNo.disabled = busy;
+      guestName.disabled = busy || rsvpFields.hidden;
+      guestCount.disabled = busy || !attending;
+    }
+
     rsvpForm.addEventListener('submit', async e => {
       e.preventDefault();
-      if (attending === null) return;
-      const submit = $('submitRsvp');
-      submit.disabled = true;
-      submit.textContent = 'Sending…';
+      if (attending === null || submitting || !rsvpForm.reportValidity()) return;
+      if (isRsvpClosed()) {
+        rsvpError.textContent = RSVP_MESSAGES.deadlinePassed;
+        rsvpError.hidden = false;
+        return;
+      }
+      setRsvpBusy(true);
       rsvpError.hidden = true;
       try {
-        if (!RSVP_ENDPOINT) throw new Error('RSVP submissions are not configured yet. Please contact the couple.');
-        const response = await fetch(RSVP_ENDPOINT, {
-          method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ name: guestName.value.trim(), attending, guests: attending ? Number(guestCount.value) : 0 })
-        });
-        const result = await response.json();
-        if (!response.ok || !result.ok) throw new Error(result.error || 'Unable to save your RSVP. Please try again.');
-        showThanks();
+        const submission = buildRsvpSubmission();
+        await postRsvp(submission);
+        saveRsvp(submission);
+        showThanks(submission);
       } catch (err) {
         rsvpError.textContent = err.message || 'Something went wrong. Please try again.';
         rsvpError.hidden = false;
       } finally {
-        submit.disabled = false;
-        submit.textContent = 'Send my RSVP →';
+        setRsvpBusy(false);
       }
     });
 
@@ -831,7 +982,6 @@
 
     /* ---------- Boot ---------- */
 
-    loadSaveTheDate();
     render();
     const scratch = initScratch();
     initPetals();

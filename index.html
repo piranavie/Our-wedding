@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#21080e">
-<title>Prakanth & Piranavie | Wedding Invitation</title>
+<title>Wedding Invitation</title>
 <link rel="preload" as="image" href="save_the_date.webp">
 <link rel="preload" as="image" href="invitation.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20">
+<link rel="stylesheet" href="styles.css?v=29">
 </head>
 <body>
 <!-- Shared SVG definitions for the envelope -->
@@ -53,15 +53,17 @@
 <div class="petals" id="petals"></div>
 <div class="vignette"></div>
 
+<div class="confetti" id="confetti" aria-hidden="true"></div>
+
 <main class="stage" id="stage">
-  <div class="topline">Together with our families<span>Prakanth &amp; Piranavie</span></div>
+  <div class="topline">Together with our families<span id="coupleNames">The happy couple</span></div>
 
   <div class="area">
     <div class="env-wrap">
       <button class="envelope" id="envelope" type="button" aria-label="Open the wedding invitation envelope">
         <span class="env-shadow"></span>
         <span class="env-back"></span>
-        <span class="env-card" id="envCard"></span>
+        <span class="env-card" id="envCard" aria-hidden="true"></span>
 
         <!-- Front pocket: side flaps + bottom flap -->
         <svg class="pocket" viewBox="0 0 600 400" aria-hidden="true">
@@ -108,26 +110,27 @@
 
       <div class="env-hint">
         <h1>You're Invited</h1>
+        <p class="family-greeting" id="familyGreeting" hidden></p>
         <p>Tap the envelope to open</p>
       </div>
     </div>
 
     <div class="deck" id="deck" aria-live="polite">
       <figure class="card current" data-label="Save the Date">
-        <img id="saveTheDateImage" src="save_the_date.webp" alt="Save the date for Prakanth and Piranavie" draggable="false">
+        <img src="save_the_date.webp" alt="Save the date" data-couple-alt="Save the date for {couple}" draggable="false">
         <div class="scratch" id="scratch" role="button" tabindex="0" aria-label="Scratch to reveal the wedding date">
           <canvas class="scratch-foil" id="scratchFoil" aria-hidden="true"></canvas>
           <span class="scratch-hint" aria-hidden="true"><i class="scratch-finger"></i>Scratch to reveal the date</span>
         </div>
       </figure>
       <figure class="card behind" data-label="Invitation">
-        <img src="invitation.webp" alt="Wedding of Prakanth and Piranavie at The Crystal Suite, The Greyhound Hotel, 3 London Road, Slough, Berkshire SL3 7HR on Saturday 28 August 2027. Kindly RSVP by 8 August 2027" draggable="false">
+        <img src="invitation.webp" alt="Wedding invitation" data-couple-alt="Wedding of {couple} at The Crystal Suite, The Greyhound Hotel, 3 London Road, Slough, Berkshire SL3 7HR on Saturday 28 August 2027. Kindly RSVP by 8 August 2027" draggable="false">
         <button class="zoom-hint" id="zoomInvitation" type="button" aria-label="Enlarge the invitation to read it">⤢ Tap to enlarge</button>
       </figure>
     </div>
   </div>
 
-  <nav class="nav" aria-label="Invitation cards">
+  <nav class="nav" aria-label="Invitation cards" hidden>
     <button class="btn ghost" id="prevBtn" type="button" disabled>‹ Back</button>
     <div class="dots"><span id="label">Save the Date</span><div id="dots"></div></div>
     <button class="btn" id="nextBtn" type="button">Next ›</button>
@@ -137,6 +140,7 @@
   <div class="rsvp-panel">
     <div class="rsvp-ornament" aria-hidden="true">✦ ❀ ✦</div>
     <h2 id="rsvpTitle">Will you join us?</h2>
+    <p class="family-greeting" id="rsvpFamilyGreeting" hidden></p>
     <p id="rsvpIntro">Your presence would make our special day even more memorable. Kindly reply by <b id="rsvpDeadline">8 August 2027</b>.</p>
     <div class="countdown countdown-compact" id="rsvpCountdown" aria-label="Time left to RSVP">
       <p class="countdown-label">Time left to reply</p>
@@ -167,7 +171,7 @@
     </form>
     <div id="rsvpThanks" hidden role="status">
       <p id="rsvpThanksText"></p>
-      <p class="rsvp-footer">We look forward to celebrating with you. See you soon!</p>
+      <p class="rsvp-footer">Thank you for your response.</p>
     </div>
     <button type="button" class="rsvp-close" id="rsvpBack">← Back to the programme</button>
   </div>
@@ -219,6 +223,7 @@
   <button type="button" class="date-pop-close viewer-close" id="viewerClose" aria-label="Close">×</button>
 </dialog>
 
-<script src="script.js?v=20" defer></script>
+<script src="shared.js?v=1" defer></script>
+<script src="script.js?v=27" defer></script>
 </body>
 </html>

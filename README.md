@@ -1,4 +1,4 @@
-# Prakanth & Piranavie — Wedding Invitation
+# Wedding Invitation
 
 A lightweight static wedding invitation with an animated envelope, two invitation cards, and an RSVP interface. No npm, build step, Netlify, or database is required to **view** the invitation.
 
@@ -7,8 +7,12 @@ A lightweight static wedding invitation with an animated envelope, two invitatio
 - `index.html` — semantic HTML for the invitation and RSVP form
 - `styles.css` — responsive styles and animations
 - `script.js` — envelope, card navigation, scratch card, programme and RSVP form behavior
-- `config.json` — all editable settings: RSVP endpoint, wedding date/venue, Save the Date Drive ID, programme sheet URL and fallback events
-- `save_the_date.webp` / `invitation.webp` — invitation artwork
+- `shared.js` — common configuration loading, name normalization, and safe message-template formatting; loaded before each page's script
+- `config.json` — couple names, WhatsApp message, RSVP endpoint, wedding date/venue, programme sheet URL and fallback events
+- `invitation.webp` — full invitation artwork
+- `save_the_date.webp` — local Save the Date artwork, used by the first card and envelope preview
+- `share.html`, `share.js`, `share.css` — family-personalized WhatsApp invitation link generator
+- `google-apps-script/Code.gs` — prepared Google Sheets RSVP receiver (owner deployment required)
 - `.github/workflows/pages.yml` — automatic GitHub Pages deployment
 
 ## Run locally
@@ -27,7 +31,7 @@ npx serve .
 
 Then open `http://localhost:8080`. 
 
-until `rsvpEndpoint` in `config.json` is set
+RSVP submissions remain unavailable until `rsvpEndpoint` in `config.json` is set to a deployed receiver.
 
 ## Publish on GitHub Pages
 
@@ -40,34 +44,57 @@ If an older GitHub Pages workflow exists, remove it to avoid competing deploymen
 
 ## RSVP setup (required before sending to guests)
 
-The RSVP form currently shows a clear configuration error rather than pretending to save a response. GitHub Pages cannot host `/api/rsvp`.
+The RSVP form shows a configuration error rather than pretending to save a response until a working endpoint is configured. GitHub Pages cannot execute the receiver.
 
-To save responses, deploy an HTTPS endpoint (for example a Google Apps Script web app backed by Google Sheets) that accepts a POST body with:
+The prepared receiver in `google-apps-script/Code.gs` targets spreadsheet `15ZZUWV8frLQvOnyolBEJSoTB3LnJ34ZQ`, tab `668031434`. See [receiver setup and verification](google-apps-script/README.md). The spreadsheet viewing URL is not a submission endpoint. The owner must deploy the handler and supply its HTTPS `/exec` URL for `rsvpEndpoint` in `config.json`.
+
+The form sends:
 
 ```json
-{"name":"Guest name","attending":true,"guests":3}
+{"name":"Thangasuthan Family","attending":true,"guests":3,"requestId":"0123456789abcdef0123456789abcdef"}
 ```
 
-Then set `rsvpEndpoint` in `config.json` to the endpoint URL.
+An unchanged retry reuses its request ID to avoid duplicate rows. A success message appears only after the receiver returns `ok: true`. No deployment or live sheet validation has been performed.
+
+## Personalized WhatsApp invitations
+
+Edit `coupleNames` in `config.json` to change the couple's names in the invitation heading, browser titles, image descriptions, calendar event title, and WhatsApp message. The current value is `Prakath & Piranvie`. Names embedded in WebP artwork must be updated separately.
+
+Edit `whatsappMessage` in the same file to change the message. Its placeholders are `{family}` for the recipient, `{couple}` for `coupleNames`, and `{url}` for the personalized invitation link. Use `\n` for line breaks inside the JSON string. The sharing page loads this configuration before enabling link creation; it does not silently use hard-coded names if configuration loading fails.
+
+Open `share.html` on your published website. Enter the published invitation URL and the family or guest name, choose **Create invitation link**, then **Review in WhatsApp**. Choose the recipient and review the message before sending; nothing is sent automatically. You can also copy the generated link.
+
+The generated link uses the `family` query parameter, for example `index.html?family=Thangasuthan%20Family`. The invitation displays a personal greeting and prefills the editable RSVP name. Names are inserted as text, not HTML. Without a family parameter, the invitation remains generic and the guest enters their name.
+
+The name is visible in the URL; it is not private or authenticated. Do not include sensitive information. Family links do not restrict guest counts or access. The link generator stores no family list and does not submit data to the RSVP sheet.
+
+For a guest preview as Piranavie, open `index.html?family=Piranavie` on the running website. This changes only that link's greeting and RSVP name; it does not change the configured couple names or submit an RSVP.
+
+### Automatic invitation sending from Google Sheet
+
+The Apps Script receiver can process a `Guest List` sheet and send invitation links automatically to rows where `Phone / WhatsApp` is not blank.
+
+- Personalized links include `family`, `phone`, and `invite` parameters.
+- Guest RSVP updates are mapped back to the matching guest row by `Invite ID` (or phone fallback).
+- Corrected RSVP family name, RSVP response, and number of people are written back to the guest row.
+
+See `google-apps-script/README.md` for required columns, script properties, and execution steps (`processInvitationsNow()`).
 
 ## Editing
 
-- Wedding names and text: `index.html`
+- Couple names and WhatsApp message: `config.json` (`coupleNames`, `whatsappMessage`)
+- Other invitation text: `index.html`
 - Colours, fonts, layout, motion: `styles.css`
 - Form logic, animations: `script.js`
-- Settings (RSVP endpoint, wedding details, programme, Save the Date image): `config.json`
+- Settings (RSVP endpoint, wedding details, programme): `config.json`
 - Replace images using the same filenames to keep references working.
 
 
-## Updating the Save the Date via Google Drive
+## Local Save the Date artwork
 
-The Save the Date image is loaded from Google Drive file ID `1teqbaa0HbVDr3qx8h63YTRe5iYliBw8b` when a guest opens the website. If it fails to load, the included `save_the_date.webp` is used. The envelope preview and full card use the same image.
+The first card and envelope preview load `save_the_date.webp` directly from this folder. No Google Drive request or image-loading JavaScript is needed. The temporary photo-free HTML/CSS card has been removed; the original WebP file itself was never modified.
 
-1. In Google Drive, set the file to **Anyone with the link → Viewer**.
-requiring an update to `saveTheDate.driveFileId` in `config.json`.
-3. Google Drive may cache thumbnails or block hotlinking, so updates may not be immediate or reliable. For guaranteed delivery, publish the image as a website asset instead.
-
-GitHub Pages cannot access private Drive files. The image must be an image format supported by browsers (JPEG, PNG, WebP), not a PDF. RSVP submissions still require a configured Google Apps Script endpoint.
+Replace `save_the_date.webp` to update the artwork. Text embedded in the image is not generated from `config.json`: keep the artwork date and the configured wedding date in sync. The date popup and countdowns use `config.json` and the venue time zone. Scrolling, larger cards, and navigation that unlocks after the scratch reveal remain enabled.
 
 ### Scratch to reveal the date
 The date on the Save the Date card is hidden under a gold foil panel (also covered on the envelope preview). Guests scratch the foil with a finger or mouse; once about 35% is cleared the foil dissolves and a date popup appears with a day countdown, an **Add to calendar** (.ics) button and a **See the invitation** button that advances to the next card. Two quick taps on the panel, or Enter/Space for keyboard users, also reveal it.
@@ -90,7 +117,7 @@ To let the couple update the programme without editing the site:
 The page fetches the sheet on load, when the Programme opens, and every `programme.refreshSeconds` while it stays open. If the sheet is unreachable or empty, the `programme.fallback` list in `config.json` is shown instead. You can also reference local images (e.g. `images/oonjal.jpg`) in the Image column or in the fallback list.
 
 ### Invitation card reveal
-and respects reduced-motion settings (falls back to a plain fade). No additional image or library is required.
+The invitation card uses a reveal animation and respects reduced-motion settings. No additional image or library is required.
 
 ### Enlarge to read
 Tapping the invitation card (or the "Tap to enlarge" button) opens a full-screen viewer so guests can read the artwork clearly: pinch or scroll to zoom up to 4×, drag to pan, double-tap toggles 2.5×, and × or Esc closes it.
