@@ -45,76 +45,131 @@
   "programme": {
     "sheetCsvUrl": "",
     "refreshSeconds": 120,
-    "fallback": [
+      "fallback": [
+
       {
+
         "time": "10:00 am",
-        "title": "Welcome & Nadaswaram",
-        "description": "Guests are welcomed with traditional music as the families gather.",
+
+        "title": "Vanakkam · வணக்கம்",
+
+        "description": "A beautiful beginning to our special day.",
+
         "image": "",
-        "glyph": "🎺"
+
+        "glyph": "🎶"
+
       },
+
       {
+
         "time": "10:15 am",
-        "title": "Ganapathi Pooja",
-        "description": "Prayers to Lord Ganesha for an auspicious beginning.",
+
+        "title": "Sacred Wedding Ceremonies",
+
+        "description": "A celebration of cherished Jaffna Tamil traditions.",
+
         "image": "",
-        "glyph": "🪧"
+
+        "glyph": "🪷"
+
       },
+
       {
-        "time": "10:45 am",
-        "title": "Kasi Yatra",
-        "description": "The groom sets off on his symbolic pilgrimage before the bride’s father persuades him to return.",
+
+        "time": "11:00 am",
+
+        "title": "Blessings & Traditions",
+
+        "description": "Sacred moments as two families become one.",
+
         "image": "",
-        "glyph": "☂️"
+
+        "glyph": "🪔"
+
       },
+
       {
+
         "time": "11:30 am",
-        "title": "Maalai Maatral",
-        "description": "Exchange of garlands as the couple formally accept each other.",
+
+        "title": "Thaali Kattuthal · தாலி கட்டுதல்",
+
+        "description": "The sacred moment of our union.",
+
         "image": "",
-        "glyph": "💐"
+
+        "glyph": "💛"
+
       },
+
       {
-        "time": "11:20 am",
-        "title": "Oonjal",
-        "description": "The couple are seated on the swing and blessed with songs and coloured rice.",
-        "image": "",
-        "glyph": "🌼"
-      },
-      {
+
         "time": "11:45 am",
-        "title": "Kanyadaanam",
-        "description": "The bride’s parents give her hand in marriage.",
+
+        "title": "Marriage Rituals & Blessings",
+
+        "description": "Traditions of love, devotion and togetherness.",
+
         "image": "",
-        "glyph": "🤲"
-      },
-      {
-        "time": "12:05 pm",
-        "title": "Thaali Kattu · Muhurtham",
-        "description": "The groom ties the thaali as the drums rise — the sacred moment of marriage.",
-        "image": "",
-        "glyph": "💍"
-      },
-      {
-        "time": "12:30 pm",
-        "title": "Saptapadi & Ammi Midithal",
-        "description": "Seven steps around the fire and the stepping on the grinding stone.",
-        "image": "",
+
         "glyph": "🔥"
+
       },
+
       {
-        "time": "1:00 pm",
-        "title": "Aseervatham & Lunch",
-        "description": "Blessings from elders followed by a traditional vegetarian feast.",
+
+        "time": "12:30 pm",
+
+        "title": "Thirumana Virundhu · திருமண விருந்து",
+
+        "description": "Join us for a traditional wedding feast.",
+
         "image": "",
-        "glyph": "🍽️"
+
+        "glyph": "🍃"
+
       },
+
       {
-        "time": "3:30 pm",
-        "title": "Photographs & Celebrations",
-        "description": "Join the couple for photos, music and dancing until 6:00 pm.",
+
+        "time": "1:00 pm – 3:00 pm",
+
+        "title": "Wedding Memories",
+
+        "description": "Let's capture beautiful moments together.",
+
         "image": "",
+
         "glyph": "📸"
+
+      },
+
+      {
+
+        "time": "3:00 pm – 6:00 pm",
+
+        "title": "Wedding Celebrations",
+
+        "description": "An afternoon of joy, laughter and surprises.",
+
+        "image": "",
+
+        "glyph": "🎉"
+
+      },
+
+      {
+
+        "time": "6:00 pm",
+
+        "title": "Nandri · நன்றி",
+
+        "description": "Thank you for being part of our special day.",
+
+        "image": "",
+
+        "glyph": "🙏"
       }
     ]
   }
