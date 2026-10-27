@@ -1,7 +1,7 @@
 {
   "coupleNames": "Prakanth & Piranavie",
   "whatsappMessage": "Dear {family},\n\nWe warmly invite you to celebrate the wedding of {couple}.\n\nOpen your invitation and kindly RSVP here:\n{url}\n\nWe look forward to celebrating with you!",
-  "rsvpEndpoint": "__RSVP_ENDPOINT__",
+  "rsvpEndpoint": "https://script.google.com/macros/s/AKfycbyV0VIQ5RaEv3lIN33s4Grclib4bmS52apVSy0GIZwQt7sTjinq0UxT-cm9jiajERAN/exec",
 
   "wedding": {
     "title": "Wedding",
@@ -21,7 +21,7 @@
   },
 
   "googleSheets": {
-    "spreadsheetUrl": "https://docs.google.com/spreadsheets/d/15ZZUWV8frLQvOnyolBEJSoTB3LnJ34ZQ/edit?gid=668031434#gid=668031434",
+    "spreadsheetUrl": "https://docs.google.com/spreadsheets/d/1GDBerZT4qlJsuzFYmnJb8wi43t1sa4edkqIvg1FYcnQ/edit?gid=668031434#gid=668031434",
     "tabs": {
       "guestList": "Guest List",
       "rsvp": "RSVP"
