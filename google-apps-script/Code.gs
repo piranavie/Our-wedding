@@ -2,7 +2,7 @@
  * This public endpoint accepts submissions only; it never returns guest records.
  */
 const DEFAULTS = {
-  spreadsheetId: '15ZZUWV8frLQvOnyolBEJSoTB3LnJ34ZQ',
+  spreadsheetId: '1GDBerZT4qlJsuzFYmnJb8wi43t1sa4edkqIvg1FYcnQ',
   rsvpSheetId: 668031434,
   rsvpHeaders: ['Submitted At', 'Family Name', 'Phone / WhatsApp', 'Attending', 'Guests', 'Request ID', 'Invite ID', 'Last Updated'],
   tabs: {
