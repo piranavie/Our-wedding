@@ -5,7 +5,7 @@
 ## Start here
 
 1. Follow **[the simple hosting-to-sharing checklist](docs/START-HERE.md)**. Check existing Google setup before running conversion again.
-2. Edit **[`src/WeddingInvitation/wwwroot/config.json`](src/WeddingInvitation/wwwroot/config.json)** — the application's configuration file.
+2. Edit **[`src/WeddingInvitation/wwwroot/config.json`](../../../Downloads/Our-wedding-main/src/WeddingInvitation/wwwroot/config.json)** — the application's configuration file.
 3. Run locally with `dotnet run --project src/WeddingInvitation --urls http://localhost:5080`, then open `http://localhost:5080`.
 4. Follow **[the Git branch checklist](docs/GIT-WORKFLOW.md)**. Branches run automated checks; only `main` deploys the website.
 5. Inspect existing Apps Script properties and workbook state before choosing configuration sync, recovery or conversion. For an unconverted tracker, use the guarded **in-place conversion** to retain the existing workbook/tab and a verified backup. Do not run new-workbook setup for that path.
