@@ -1,0 +1,49 @@
+@implements IDisposable
+
+<div class="countdown" role="group" aria-label="@Label">
+    <p class="eyebrow">@Label</p>
+    @if (_remaining <= TimeSpan.Zero)
+    {
+        <p role="status">@ExpiredText</p>
+    }
+    else
+    {
+        <div class="countdown-units" aria-live="off">
+            <span><strong>@((int)_remaining.TotalDays)</strong>days</span>
+            <span><strong>@_remaining.Hours.ToString("00")</strong>hours</span>
+            <span><strong>@_remaining.Minutes.ToString("00")</strong>minutes</span>
+            <span><strong>@_remaining.Seconds.ToString("00")</strong>seconds</span>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public DateTimeOffset Target { get; set; }
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public string ExpiredText { get; set; } = "";
+    [Parameter] public EventCallback OnElapsed { get; set; }
+    private readonly CancellationTokenSource _cancellation = new();
+    private TimeSpan _remaining;
+    private bool _notified;
+    protected override void OnParametersSet() => _remaining = Target - DateTimeOffset.UtcNow;
+    protected override void OnInitialized() => _ = TickAsync();
+    private async Task TickAsync()
+    {
+        try
+        {
+            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+            while (await timer.WaitForNextTickAsync(_cancellation.Token))
+            {
+                _remaining = Target - DateTimeOffset.UtcNow;
+                await InvokeAsync(async () =>
+                {
+                    if (_remaining <= TimeSpan.Zero && !_notified) { _notified = true; await OnElapsed.InvokeAsync(); }
+                    StateHasChanged();
+                });
+                if (_notified) break;
+            }
+        }
+        catch (OperationCanceledException) { }
+    }
+    public void Dispose() { _cancellation.Cancel(); _cancellation.Dispose(); }
+}

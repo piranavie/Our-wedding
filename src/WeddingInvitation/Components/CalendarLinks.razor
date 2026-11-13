@@ -1,0 +1,35 @@
+@using Microsoft.JSInterop
+@inject CalendarService Calendar
+@inject BrowserService Browser
+
+<div class="calendar-links" role="group" aria-label="Add wedding to your calendar">
+    <button type="button" class="calendar-add" disabled="@_busy" aria-describedby="calendar-help" @onclick="DownloadAsync">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="3" /><path d="M7 3v4M17 3v4M3 10h18M12 13v5M9.5 15.5h5" /></svg>
+        @(_busy ? "Preparing event…" : "Add to calendar")
+    </button>
+    <p id="calendar-help" class="calendar-help" role="@(_failed ? "alert" : "status")">@_message</p>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public AppConfiguration Config { get; set; } = new();
+    private bool _busy, _failed;
+    private string _message = "Opens or downloads an event for your calendar app. Confirm there to save it.";
+
+    private async Task DownloadAsync()
+    {
+        if (_busy) return;
+        _busy = true;
+        _failed = false;
+        try
+        {
+            await Browser.DownloadAsync(Config.Calendar.FileName, Calendar.CreateIcs(Config));
+            _message = "Open the event in your calendar app and confirm Add or Save. If it downloaded, open the .ics file from Downloads.";
+        }
+        catch (JSException)
+        {
+            _failed = true;
+            _message = "The calendar file could not be opened. Please try Add to calendar again.";
+        }
+        finally { _busy = false; }
+    }
+}

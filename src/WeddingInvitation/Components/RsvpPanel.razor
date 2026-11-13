@@ -1,0 +1,153 @@
+@implements IDisposable
+@inject IInvitationService Invitations
+@inject BrowserService Browser
+
+<section id="rsvp" class="rsvp-section paper-card" aria-labelledby="rsvp-title" aria-busy="@_busy">
+    <p class="eyebrow">Your presence is our blessing</p><h2 id="rsvp-title">Kindly RSVP</h2>
+    <p>Please reply by @Config.Rsvp.DeadlineLabel. You can return using the same private link to change your name or response.</p>
+    <p class="quiet">RSVP closes in your timezone: <LocalTime Value="EffectiveDeadline" /></p>
+    <Countdown Target="EffectiveDeadline" Label="Time to reply" ExpiredText="RSVP is now closed" OnElapsed="CloseRsvp" />
+    @if (_loading)
+    {
+        <p role="status">Finding your household invitation…</p>
+    }
+    @if (_error is not null)
+    {
+        <div class="error-message" role="alert"><p>@_error</p></div>
+    }
+    @if (_success is not null)
+    {
+        <p class="success-message" role="status">@_success</p>
+    }
+    @if (!_loading && _household is null)
+    {
+        <p>A valid private Invitation ID is required to RSVP. Please open the complete link sent to your household, or ask the couple for your invitation.</p>
+        @if (!string.IsNullOrWhiteSpace(_invitationId))
+        {
+            <button class="button-secondary" disabled="@_busy" @onclick="LoadAsync">Retry invitation lookup</button>
+        }
+    }
+    @if (_household is not null)
+    {
+        <h3>Welcome, @_household.FamilyName</h3>
+        <p>Current response: <strong>@_household.Status</strong> · Expected household size: @_household.ExpectedFamilyCount</p>
+        @if (Closed)
+        {
+            <p class="notice" role="status">RSVP has closed. Your saved response is shown below. Please contact the couple for changes.</p>
+        }
+        <EditForm Model="_form" OnValidSubmit="SaveAsync" FormName="household-rsvp">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <fieldset disabled="@(_busy || Closed)">
+                <legend>Your household response</legend>
+                <label for="family-name">Family name <span aria-hidden="true">*</span></label>
+                <InputText id="family-name" @bind-Value="_form.FamilyName" maxlength="120" autocomplete="organization" aria-required="true" />
+                <ValidationMessage For="@(() => _form.FamilyName)" />
+                <label for="rsvp-status">Will your household attend? <span aria-hidden="true">*</span></label>
+                <InputSelect id="rsvp-status" @bind-Value="_form.Status" aria-required="true">
+                    <option value="">Please choose</option><option value="Accepted">Joyfully accept</option><option value="Declined">Regretfully decline</option>
+                </InputSelect>
+                <ValidationMessage For="@(() => _form.Status)" />
+                @if (_form.Status == "Accepted")
+                {
+                    <label for="attending-count">Number attending, including children <span aria-hidden="true">*</span></label>
+                    <InputNumber id="attending-count" @bind-Value="_form.AttendingCount" min="1" max="@Config.Rsvp.MaxAttending" aria-required="true" />
+                }
+                <button type="submit">@(_busy ? "Saving your response…" : "Save my RSVP")</button>
+            </fieldset>
+        </EditForm>
+        <button class="button-subtle" disabled="@_busy" @onclick="LoadAsync">Reload saved response (discard unsaved edits)</button>
+        <p class="quiet">Only a confirmed save is shown as successful. Your household information is shared with the wedding organizers.</p>
+    }
+    @if (!string.IsNullOrWhiteSpace(Config.Rsvp.ContactUrl))
+    {
+        <a class="text-link" href="@Config.Rsvp.ContactUrl" target="_blank" rel="noopener noreferrer">Contact the couple ↗</a>
+    }
+</section>
+
+@code {
+    [Parameter, EditorRequired] public AppConfiguration Config { get; set; } = new();
+    private readonly CancellationTokenSource _cancellation = new();
+    private Household? _household;
+    private RsvpFormModel _form = new();
+    private string _invitationId = "";
+    private bool _loading = true;
+    private bool _busy;
+    private bool _closed;
+    private DateTimeOffset? _serverDeadline;
+    private string? _error;
+    private string? _success;
+    private string? _pendingSignature;
+    private string _requestId = "";
+    private DateTimeOffset EffectiveDeadline => _serverDeadline ?? Config.Rsvp.ClosesAt;
+    private bool Closed => _closed || DateTimeOffset.UtcNow >= EffectiveDeadline;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        _invitationId = await Browser.InvitationIdAsync();
+        await LoadAsync();
+        StateHasChanged();
+    }
+
+    private async Task LoadAsync()
+    {
+        _error = _success = null;
+        _busy = true;
+        try
+        {
+            if (string.IsNullOrWhiteSpace(_invitationId)) return;
+            var response = await Invitations.LookupAsync(_invitationId, _cancellation.Token);
+            ApplyResponse(response);
+        }
+        catch (InvitationException ex) { _error = ex.Message; }
+        catch (OperationCanceledException) { }
+        finally { _loading = false; _busy = false; }
+    }
+
+    private void ApplyResponse(ApiResponse response)
+    {
+        if (response.Household is null) throw new InvitationException("The household response was missing. Please contact the couple.");
+        _household = response.Household;
+        _serverDeadline = response.ClosesAt;
+        _closed = response.Closed;
+        _form = new RsvpFormModel
+        {
+            FamilyName = _household.FamilyName,
+            Status = _household.Status == "Pending" ? "" : _household.Status,
+            AttendingCount = _household.Status == "Pending" ? Math.Clamp(_household.ExpectedFamilyCount, 1, Config.Rsvp.MaxAttending) : _household.AttendingCount
+        };
+        _pendingSignature = null;
+    }
+
+    private async Task SaveAsync()
+    {
+        if (_busy || _household is null) return;
+        _error = _success = null;
+        if (Closed) { _error = "RSVP has closed. Please contact the couple for changes."; return; }
+        var count = _form.Status == "Accepted" ? _form.AttendingCount : 0;
+        if (string.IsNullOrWhiteSpace(_form.FamilyName) || (_form.Status == "Accepted" && (count < 1 || count > Config.Rsvp.MaxAttending)))
+        { _error = $"Please enter a family name and an attending count between 1 and {Config.Rsvp.MaxAttending}."; return; }
+        var request = new RsvpRequest("rsvp", _invitationId, _form.FamilyName.Trim(),
+            _form.Status, count, "", _household.LastUpdated);
+        var signature = System.Text.Json.JsonSerializer.Serialize(request);
+        if (signature != _pendingSignature) { _pendingSignature = signature; _requestId = Guid.NewGuid().ToString("N"); }
+        _busy = true;
+        try
+        {
+            var response = await Invitations.SaveAsync(request with { RequestId = _requestId }, _cancellation.Token);
+            ApplyResponse(response);
+            _success = "Your RSVP has been saved. Return using this invitation link to make changes before the deadline.";
+        }
+        catch (InvitationException ex)
+        {
+            _error = ex.Message;
+            if (ex.Code == "CLOSED") _closed = true;
+        }
+        catch (OperationCanceledException) { }
+        finally { _busy = false; }
+    }
+
+    private void CloseRsvp() => _closed = true;
+    public void Dispose() { _cancellation.Cancel(); _cancellation.Dispose(); }
+}
