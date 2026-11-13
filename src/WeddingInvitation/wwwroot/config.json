@@ -1,0 +1,43 @@
+{
+  "coupleNames": "Prakanth & Piranavie",
+  "welcomeText": "With the blessings of our families, we invite you to share in our joy.",
+  "blessingText": "Two hearts, two families, one beautiful beginning. Join us for our Hindu Thaali wedding.",
+  "apiEndpoint": "",
+  "invitationImage": "assets/invitation.webp",
+  "saveTheDateImage": "assets/save-the-date.webp",
+  "musicUrl": "",
+  "musicVolume": 0.35,
+  "sharing": {
+    "whatsAppUrl": "https://wa.me/",
+    "messageTemplate": "Dear {family},\n\nWith love, we invite you to the wedding of {couple}.\n\nYour private invitation and RSVP link:\n{url}\n\nPlease reply by {deadline}."
+  },
+  "wedding": {
+    "title": "Thaali Wedding",
+    "venueName": "The Crystal Grand",
+    "address": "3 Bath Rd, Slough SL1 3UA",
+    "mapUrl": "https://www.google.com/maps/dir/?api=1&destination=The%20Crystal%20Grand%2C%203%20Bath%20Rd%2C%20Slough%20SL1%203UA%2C%20UK",
+    "timeZone": "Europe/London",
+    "start": "2027-08-28T10:00:00+01:00",
+    "end": "2027-08-28T18:00:00+01:00"
+  },
+  "rsvp": {
+    "closesAt": "2027-08-09T00:00:00+01:00",
+    "deadlineLabel": "8 August 2027, end of day (UK time)",
+    "maxAttending": 30,
+    "maxMembers": 30,
+    "contactUrl": ""
+  },
+  "calendar": {
+    "googleUrl": "https://calendar.google.com/calendar/render",
+    "outlookUrl": "https://outlook.live.com/calendar/0/deeplink/compose",
+    "fileName": "prakanth-piranavie-wedding.ics",
+    "eventId": "prakanth-piranavie-20270828@wedding-invitation"
+  },
+  "programme": [
+    { "title": "Vanakkam · வணக்கம்", "description": "A warm welcome to our family and friends.", "start": "2027-08-28T10:00:00+01:00" },
+    { "title": "Sacred wedding ceremonies", "description": "Celebrating cherished Sri Lankan Tamil traditions.", "start": "2027-08-28T10:15:00+01:00" },
+    { "title": "Thaali Kattuthal · தாலி கட்டுதல்", "description": "The sacred moment of our union, with your blessings.", "start": "2027-08-28T11:30:00+01:00" },
+    { "title": "Thirumana Virundhu", "description": "Join us for a traditional wedding feast.", "start": "2027-08-28T12:30:00+01:00" },
+    { "title": "Wedding celebrations & photo time", "description": "Photo time with family and friends, followed by dancing, laughter and togetherness.", "start": "2027-08-28T15:00:00+01:00" }
+  ]
+}

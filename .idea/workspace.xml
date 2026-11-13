@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0cb40f19-3f58-4ac1-a8a3-fecd2c82dcf5" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/static.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/SETUP.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/SPREADSHEET.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/START-HERE.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/google-apps-script/v2/Code.gs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/google-apps-script/v2/ConvertGuestTracker.gs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/google-apps-script/v2/ImportGuestTracker.gs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/google-apps-script/v2/appsscript.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/google-apps-script/v2/sample-guests.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/App.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Components/CalendarLinks.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Components/Countdown.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Components/InvitationPage.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Components/LocalTime.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Components/MusicControl.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Components/OriginalEnvelope.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Components/RsvpPanel.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Components/ScratchReveal.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Components/WeddingIllustration.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Models/AppConfiguration.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Models/InvitationModels.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Program.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Properties/launchSettings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Services/BrowserService.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Services/CalendarService.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Services/ConfigurationService.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/Services/InvitationService.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/WeddingInvitation.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/_Imports.razor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/wwwroot/assets/invitation.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/wwwroot/assets/save-the-date.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/wwwroot/config.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/wwwroot/css/app.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/wwwroot/css/original-blazor.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/wwwroot/css/original.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/wwwroot/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/wwwroot/js/invitation.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WeddingInvitation/wwwroot/js/original-design.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/WeddingInvitation.Checks/Program.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/WeddingInvitation.Checks/WeddingInvitation.Checks.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/ambience.test.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/apps-script.test.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/browser-helpers.test.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/configuration-cases.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/guest-tracker-conversion.test.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/guest-tracker-import.test.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/nine-column-storage.test.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/original-design.test.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/simple-rsvp.test.cjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/wedding-configuration-diagnostics.test.cjs" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="cleanup/simplify-project" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="3M43FPeXHN6z20prVOzWTk4YJmA" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/src/WeddingInvitation/wwwroot" />
+      <recent name="$PROJECT_DIR$/src/WeddingInvitation" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0cb40f19-3f58-4ac1-a8a3-fecd2c82dcf5" name="Changes" comment="" />
+      <created>1794595909677</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1794595909677</updated>
+    </task>
+    <servers />
+  </component>
+</project>
