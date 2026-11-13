@@ -2,15 +2,7 @@
 
 Guests enter only **Family name**, **Accept / Decline**, and **Number attending** (when accepting). Your Guest List keeps exactly nine columns. The spreadsheet stays private; guests receive their own invitation URL, never the spreadsheet or the whole guest list.
 
-## 1. Publish the website
-
-- Prepare and push a review branch using [GIT-WORKFLOW.md](GIT-WORKFLOW.md), then merge approved changes into **main** after checks pass. Exclude `private-guests`, `.vs`, `.tools`, `bin`, `obj` and any generated private links. Do not upload a ZIP as a single file.
-- In GitHub **Settings → Pages**, select **GitHub Actions**.
-- In **Actions**, run **Build and deploy wedding invitation** (a push to main also runs it).
-- Wait for success, then copy the website URL from the deployment. Open it and confirm the envelope loads.
-- For this first deployment, `apiEndpoint` may stay blank. RSVP will not save until step 4.
-
-## 2. Check what already exists — do not reset anything
+## 1. Check what already exists — do not reset anything
 
 Open the Google Apps Script project whose **Executions** contains the failed run. Privately compare its Script ID in **Project Settings** with any other candidate projects, and its **Deploy → Manage deployments** URL with the published website's `apiEndpoint`. A spreadsheet-bound script and a standalone project have separate Script Properties, even when they access the same spreadsheet. Do not create another project yet.
 
@@ -23,7 +15,7 @@ Check **Project Settings → Script properties** for `SITE_URL`, `APP_SETTINGS_J
 
 `SITE_URL` must be the actual published HTTPS invitation folder ending in `/`, serving the current `config.json`; `localhost:5080` is not usable by Google's runtime. Sync changes server settings, so verify the published dates and limits first. `checkWeddingSetup()` is a configured-workbook validator, not an initial discovery tool; its output includes a private workbook URL and should not be posted publicly. Retain the existing deployment URL and deploy a **New version** when updating production code.
 
-## 3. Convert the original tracker once, if needed
+## 2. Convert the original tracker once, if needed
 
 Use [the private conversion instructions](../../../../Downloads/Our-wedding-main/private-guests/CONVERT-EXISTING-TAB.md) locally; they contain your source spreadsheet/tab IDs. In a fresh Apps Script project:
 
@@ -41,7 +33,7 @@ Your Guest List headers, in order, are:
 
 Keep **Epected attendance** spelled exactly this way. Hidden technical storage is still required for reliable saves; hiding is not security. Keep the workbook and backups **Restricted**, not published to the web.
 
-## 4. Connect RSVP
+## 3. Connect RSVP
 
 - In Apps Script choose **Deploy → New deployment → Web app**: **Execute as Me**, access **Anyone**. For an existing deployment, use **Manage deployments → Edit → New version → Deploy** instead.
 - Copy the production URL ending **`/exec`** (not `/dev`, not the spreadsheet URL).
@@ -50,7 +42,7 @@ Keep **Epected attendance** spelled exactly this way. Hidden technical storage i
 
 If your Google organization blocks anonymous web apps, its policy must be resolved before guests can RSVP.
 
-## 5. Prepare and test one household
+## 4. Prepare and test one household
 
 - Fill blank **Epected attendance** values with each household's expected size (1–30). Leave guest response fields alone.
 - Run **checkWeddingSetup**, then **prepareInvitationLinks**. This creates links but sends nothing.
@@ -58,7 +50,7 @@ If your Google organization blocks anonymous web apps, its policy must be resolv
 - Test accepting, changing the family name/count, and declining. Verify G (response), I (attending count), the dashboard and RSVP history update. The test writes real data—do not test on a guest's record accidentally.
 - Test on a phone before sending real invitations. A failed save must not be treated as confirmed.
 
-## 6. Send invitations
+## 5. Send invitations
 
 - Copy each household's **Invitation URL** (F) into WhatsApp, email or your chosen messenger. Send only that household's link.
 - After actually sending it, manually set **Invitation Status** (E) to **Sent**. Otherwise leave **Not sent**.
